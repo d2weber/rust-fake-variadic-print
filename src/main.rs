@@ -8,25 +8,28 @@ enum Arg<T, U, V, W> {
     W(W),
 }
 
-use Arg::*;
-
-fn concat<T, U, V, W>(args: &[Arg<T, U, V, W>]) -> String
+impl<T, U, V, W> Display for Arg<T, U, V, W>
 where
     T: Display,
     U: Display,
     V: Display,
     W: Display,
 {
-    let mut out = String::new();
-    for s in args {
-        out.push_str(&match s {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        fmt.write_str(&match self {
             T(x) => x.to_string(),
             U(x) => x.to_string(),
             V(x) => x.to_string(),
             W(x) => x.to_string(),
-        });
+        })
     }
-    out
+}
+
+use Arg::*;
+
+fn concat<A: Display>(args: &[A]) -> String
+{
+    args.iter().map(|a| a.to_string()).collect::<Vec<String>>().join("")
 }
 
 fn main() {
